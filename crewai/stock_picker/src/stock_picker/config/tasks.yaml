@@ -1,0 +1,73 @@
+trend_analysis_task:
+  description: >
+    Scan the Indian stock market to identify the top 3 to 5 trending companies within the {sector} sector, ensuring coverage across large-cap, mid-cap, and small-cap segments.
+
+    Technical Details to look for:
+    - **Unusual Options Activity (UOA):** Look for high call/put volume ratios, significant open interest changes, and large block trades (sweeps/splits) indicating institutional accumulation.
+    - **Momentum Indicators:** Identify stocks breaking out of consolidation patterns with high relative volume (RVOL > 1.5).
+    - **Sentiment Analysis:** Analyze social media velocity (Twitter, StockTwits, Reddit) and financial news sentiment scores. Look for positive divergence from the broader sector.
+    - **Macro/Sector Catalysts:** Identify incoming catalysts such as regulatory approvals, legislative changes, commodity price shifts, or supply chain bottlenecks that disproportionately benefit specific companies.
+    - **Price Strength:** Focus on companies exhibiting relative strength (RS) against broader market indices (e.g., NIFTY 50 for large caps, NIFTY Midcap 100, NIFTY Smallcap 100) and their respective sector indices over the last 1-month and 3-month periods.
+  expected_output: >
+    A curated list of trending companies in the {sector} sector (ensuring at least one from large-cap, one from mid-cap, and one from small-cap), including their ticker symbols, a summary of the catalyst/trend driving them, and data points on options activity and relative volume.
+  agent: trending_company_picker
+
+fundamental_research_task:
+  description: >
+    Conduct a deep-dive fundamental analysis on the companies identified in the trend analysis task.
+
+    Technical Details to analyze:
+    - **Valuation Metrics:** Calculate and compare Forward P/E, PEG ratio (targeting < 1.5 for growth at a reasonable price), Price-to-Sales (P/S), and Enterprise Value to EBITDA (EV/EBITDA).
+    - **Profitability & Margins:** Analyze Gross Margin, Operating Margin, and Net Profit Margin trends over the last 4 quarters (TTM). Evaluate Return on Equity (ROE > 15%) and Return on Invested Capital (ROIC).
+    - **Liquidity & Solvency:** Review the Current Ratio, Quick Ratio, and Debt-to-Equity ratio. Ensure the company has sufficient cash runways and manageable debt loads (Interest Coverage Ratio > 3).
+    - **Cash Flow Analysis:** Scrutinize Operating Cash Flow (OCF) and Free Cash Flow (FCF) yield. Look for consistent positive FCF generation or a clear, funded path to profitability.
+    - **Earnings Quality:** Check for earnings surprises, revenue growth rates (YoY and QoQ), and management forward guidance revisions. Identify any red flags in the Annual Reports/Quarterly filings such as inventory build-ups or ballooning accounts receivable.
+  expected_output: >
+    A comprehensive fundamental dossier for each company, detailing their financial health, valuation, moat, and highlighting any fundamental red flags. Include a rank of the companies based on purely fundamental strength.
+  agent: market_researcher
+
+technical_analysis_and_reporting_task:
+  description: >
+    Synthesize the fundamental research and perform rigorous technical analysis on the shortlisted companies to generate an actionable investment report.
+
+    Technical Details to analyze and include:
+    - **Trend Alignment:** Determine the primary and secondary trends using the 50-day and 200-day Simple Moving Averages (SMA). Check for golden cross or death cross formations.
+    - **Momentum & Oscillators:** Analyze the Relative Strength Index (RSI) (look for hidden divergences or oversold conditions < 30 / overbought > 70) and MACD (Moving Average Convergence Divergence) histograms for momentum shifts.
+    - **Volatility & Support/Resistance:** Map out key support and resistance zones using Fibonacci retracements and Volume Profile (Point of Control - POC). Analyze Bollinger Bands for volatility squeezes indicating an impending breakout.
+    - **Price Action Patterns:** Identify bullish continuation patterns (bull flags, cup and handle, ascending triangles) or reversal patterns (double bottoms, inverse head and shoulders).
+  expected_output: >
+    A detailed investment report for each analyzed stock combining fundamental strengths with technical setups. Must include specific chart pattern observations, key moving average levels, and RSI/MACD readings.
+  agent: analyst_and_report_writer
+
+stock_selection_task:
+  description: >
+    Review the comprehensive investment reports and make the final executive decision to recommend exactly three stocks: one large-cap, one mid-cap, and one small-cap for the portfolio.
+
+    Technical Details to finalize:
+    - **Risk-Adjusted Return:** Evaluate the Sharpe and Sortino ratios conceptually. Ensure the upside potential justifies the downside risk (targeting a minimum 3:1 Reward-to-Risk ratio).
+    - **Trade Execution Parameters:**
+      - **Entry Zone:** Define a precise entry price or accumulation zone based on technical support levels and Volume Profile.
+      - **Stop-Loss:** Set a hard stop-loss level (e.g., below the 50-day SMA, below recent swing lows, or utilizing Average True Range (ATR) to avoid getting stopped out by market noise).
+      - **Take-Profit Targets:** Establish primary and secondary price targets (PT1, PT2) using Fibonacci extensions or measured moves from chart patterns.
+    - **Position Sizing:** Recommend a position size based on portfolio risk tolerance and the stock's beta relative to the broader market.
+  expected_output: >
+    The final 'Buy' recommendations for exactly three distinct stocks (one large-cap, one mid-cap, and one small-cap). Each recommendation must detail the ticker symbol, market cap category, investment thesis (blending fundamental catalyst with technical timing), and exact trade parameters (Entry, Stop-Loss, PT1, PT2, and Position Sizing).
+  agent: stock_picker
+
+manager_orchestration_and_review_task:
+  description: >
+    Oversee the entire investment pipeline to ensure all agents are passing accurate, unbiased, and high-fidelity data. You must actively delegate and cross-verify findings.
+
+    Delegation & Oversight Guidelines:
+    - **Initial Direction:** Delegate the sector {sector} context effectively to the 'trending_company_picker', ensuring they do not broaden their search arbitrarily.
+    - **Cross-Verification:** If the 'market_researcher' uncovers fundamental red flags (e.g., ballooning debt) in a stock the trend picker highlighted, instruct the 'analysit_and_report_writer' to look for technical breakdowns that confirm fundamental weakness.
+    - **Final Audit:** Before the final three stocks are selected, review the technical parameters. Ensure the Reward-to-Risk ratio strictly adheres to the 3:1 minimum for each. Reject the selection if the stop-loss is too tight (within normal ATR noise) or if fundamental risk outweighs the technical setup.
+    - **Report Formatting:** Enforce a strict institutional reporting format. The final master report must include:
+      1. **Executive Summary:** The ultimate "Why" we are buying.
+      2. **The Catalyst:** Macro and sector tailwinds driving the thesis.
+      3. **Fundamental Moat:** Key metrics (PEG, FCF, Margins) proving value.
+      4. **Technical Blueprint:** The chart setup with precise Entry, Stop-Loss, and PT levels.
+      5. **Risk Factors:** A critical look at what could invalidate the trade thesis.
+  expected_output: >
+    A fully vetted, institution-grade 'Master Investment Memo'. This document should compile the synthesized output from all subordinate agents into a cohesive, highly readable, and professionally formatted report, strictly adhering to the 5-point structure outlined above.
+  agent: manager
