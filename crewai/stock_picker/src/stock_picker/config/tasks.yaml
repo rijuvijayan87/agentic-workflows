@@ -67,3 +67,12 @@ stock_selection_task:
     - fundamental_research_task
   output_file: output/stock_selection.json
   agent: stock_picker
+
+send_notification_task:
+  description: >
+    Take the final selected stocks from the stock_selection_task and use the Push Notification Tool to send a brief summary of the 3 recommended stocks to the user.
+  expected_output: >
+    A confirmation that the push notification was sent successfully.
+  agent: stock_picker
+  context:
+    - stock_selection_task

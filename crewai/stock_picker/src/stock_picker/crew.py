@@ -6,6 +6,8 @@ from crewai.project import CrewBase, agent, crew, task
 from crewai_tools import SerperDevTool
 from pydantic import BaseModel, Field
 
+from stock_picker.tools.push_notification_tool import PushNotificationTool
+
 
 class MarketCap(str, Enum):
     SMALL = "small"
@@ -129,6 +131,13 @@ class StockPicker:
         return Task(
             config=self.tasks_config["stock_selection_task"],
             output_pydantic=SelectedStockList,
+        )
+
+    @task
+    def send_notification_task(self) -> Task:
+        return Task(
+            config=self.tasks_config["send_notification_task"],
+            tools=[PushNotificationTool()],
         )
 
     @crew
