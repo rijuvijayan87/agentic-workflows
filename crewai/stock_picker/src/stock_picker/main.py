@@ -12,7 +12,7 @@ def run():
     """
     Run the crew.
     """
-    inputs = {"topic": "AI LLMs", "current_year": str(datetime.now().year)}
+    inputs = {"sector": "Green Energy"}
 
     try:
         StockPicker().crew().kickoff(inputs=inputs)
